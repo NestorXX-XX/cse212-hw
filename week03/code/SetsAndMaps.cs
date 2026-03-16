@@ -21,8 +21,27 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordsSet = new HashSet<string>(words); // One time cost to build O(n)
+        var result = new List<string>();
+        var used = new HashSet<string>();
+
+        foreach (var word in words)
+        {
+            if (word[0] == word[1])
+            {
+                continue; // if it pair is the same continue
+            }
+
+            var reversed = $"{word[1]}{word[0]}"; // compute reversed string
+
+            if (wordsSet.Contains(reversed) && !used.Contains(reversed))
+            {
+                result.Add($"{reversed} & {word}");
+                used.Add(reversed);
+                used.Add(word);
+            }
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -42,7 +61,15 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            var degree = fields[3];
+            if (degrees.ContainsKey(degree))
+            {
+                degrees[degree] += 1;
+            }
+            else
+            {
+                degrees[degree] = 1;
+            }
         }
 
         return degrees;
@@ -66,10 +93,33 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
-    }
+        // Remove spaces and convert to lowercase
+        word1 = new string(word1.Where(c => !char.IsWhiteSpace(c)).Select(char.ToLower).ToArray());
+        word2 = new string(word2.Where(c => !char.IsWhiteSpace(c)).Select(char.ToLower).ToArray());
 
+        // Fast length check
+        if (word1.Length != word2.Length)
+            return false;
+
+        // Frequency array for ASCII characters
+        int[] freq = new int[256];
+
+        // Count characters in word1, subtract in word2
+        for (int i = 0; i < word1.Length; i++)
+        {
+            freq[char.ToLower(word1[i])]++;
+            freq[char.ToLower(word2[i])]--;
+        }
+
+        // Check if all counts are zero
+        for (int i = 0; i < 256; i++)
+        {
+            if (freq[i] != 0)
+                return false;
+        }
+
+        return true;
+    }   
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
     /// United States Geological Service (USGS) consisting of earthquake data.
