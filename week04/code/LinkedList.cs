@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Xml;
 
 public class LinkedList : IEnumerable<int>
 {
@@ -32,7 +33,21 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void InsertTail(int value)
     {
-        // TODO Problem 1
+        // Create new node
+        Node newNode = new(value);
+        // If the list is empty, then point both head and tail to the new node.
+        if (_head is null)
+        {
+            _head = newNode;
+            _tail = newNode;
+        }
+        // If the list is not empty, then only tail will be affected.
+        else
+        {
+            newNode.Next = _tail.Prev; // Connect new tail to the previous tail
+            _tail.Prev = newNode; // Connect the previous tail to the new node
+            _tail = newNode;
+        }
     }
 
 
