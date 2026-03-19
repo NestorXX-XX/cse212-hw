@@ -137,7 +137,36 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void Remove(int value)
     {
-        
+        // Case 1: Remove head
+        if (_head is not null && _head.Data == value)
+        {
+            RemoveHead();
+            return;
+        }
+
+        Node? curr = _head;
+
+        while (curr is not null)
+        {
+            if (curr.Data == value)
+            {
+                // Case 2: It's the tail
+                if (curr.Next is null)
+                {
+                    _tail = curr.Prev;       // Move tail back
+                    _tail!.Next = null;      // Remove link forward
+                }
+                // Case 3: It's in the middle
+                else
+                {
+                    curr.Prev!.Next = curr.Next;  // A.Next → C
+                    curr.Next.Prev = curr.Prev;   // C.Prev → A
+                }
+                return;
+            }
+
+            curr = curr.Next;
+        }
     }
 
     /// <summary>
@@ -145,7 +174,17 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void Replace(int oldValue, int newValue)
     {
-        // TODO Problem 4
+         Node? curr = _head;
+
+        while (curr is not null)
+        {
+            if (curr.Data == oldValue)
+            {
+                curr.Data = newValue;
+            }
+
+            curr = curr.Next;
+        }
     }
 
     /// <summary>
@@ -175,8 +214,12 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public IEnumerable Reverse()
     {
-        // TODO Problem 5
-        yield return 0; // replace this line with the correct yield return statement(s)
+        var curr = _tail;            // Start at tail (you have access to _tail directly!)
+        while (curr is not null)
+        {
+            yield return curr.Data;
+            curr = curr.Prev;       // Move backward
+        }
     }
 
     public override string ToString()
